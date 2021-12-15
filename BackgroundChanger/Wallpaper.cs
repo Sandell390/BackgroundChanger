@@ -62,11 +62,13 @@ namespace BackgroundChanger
         /// </summary>
         /// <param name="userinput">the userinput</param>
         /// <returns>returns error message if userinput is wrong else null</returns>
-        public string ChangeWallpaper(int userinput)
+        public string ChangeWallpaper()
         {
             try
             {
-                CurrentImage = ImagePaths[userinput];
+                Random rand = new Random();
+                int randImg = rand.Next(0, ImagePaths.Count);
+                CurrentImage = ImagePaths[randImg];
             
                 //Change the wallpaper
                 SystemParametersInfo(SPI_SETDESKWALLPAPER,
@@ -76,7 +78,7 @@ namespace BackgroundChanger
             }
             catch
             {
-                return "Not a valid number";
+                return "Image not found";
             }
             return null;
         }

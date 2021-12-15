@@ -10,29 +10,32 @@ namespace BackgroundChanger
 {
     public class GUI
     {
+        public TimeSpan sleepTime;
         Wallpaper wallpaper;
         public GUI()
         {
             wallpaper = new Wallpaper();
         }
 
-        /// <summary>
-        /// Start menu GUI
-        /// </summary>
-        public void StartMenu()
+        private void Menu()
         {
-            Console.WriteLine("1. Update Wallpaper");
-            Console.WriteLine("2. Update folder");
+            Console.WriteLine("Hvor længe vil du vente til at baggrunden skifter?");
+            Console.WriteLine("1. 1 hour");
+            Console.WriteLine("2. 1 day");
+            Console.WriteLine("3. 7 days");
             switch (Userinput())
             {
                 case 1:
-                    ShowALlImagePaths();
-                    ChangeWallpaper();
+                    sleepTime = TimeSpan.FromHours(1);
                     break;
                 case 2:
-                    wallpaper.UpdateImagePaths();
-                    Console.WriteLine("Folder has  been updated.");
-                break;
+                    sleepTime = TimeSpan.FromDays(1);
+                    break;
+                case 3:
+                    sleepTime = TimeSpan.FromDays(7);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -41,21 +44,8 @@ namespace BackgroundChanger
         /// </summary>
         public void UpdateGUI()
         {
-            Console.ReadLine();
-            Console.Clear(); 
-            StartMenu();
-        }
-
-        /// <summary>
-        /// Shows all images
-        /// </summary>
-        private void ShowALlImagePaths()
-        {
-            Console.WriteLine("Vælg en wallpaper: ");
-            for (int i = 0; i < wallpaper.ImagePaths.Count; i++)
-            {
-                Console.WriteLine($"{i}. {Path.GetFileName(wallpaper.ImagePaths[i])}");
-            }
+            Menu();
+            ChangeWallpaper();
         }
 
         /// <summary>
@@ -80,9 +70,15 @@ namespace BackgroundChanger
         /// </summary>
         private void ChangeWallpaper()
         {
-            if (NoImageError())
-                return;
-            Console.WriteLine(wallpaper.ChangeWallpaper(Userinput()));
+            while (true)
+            {
+                if (NoImageError())
+                    return;
+                Console.WriteLine(wallpaper.ChangeWallpaper());
+                Console.WriteLine($"Background changed to {Path.GetFileName(wallpaper.CurrentImage)}");
+                wallpaper.UpdateImagePaths();
+                Thread.Sleep(sleepTime);
+            }
         }
 
         /// <summary>
